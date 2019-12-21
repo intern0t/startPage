@@ -28,15 +28,21 @@ const DateTime = () => {
     }
 
     useEffect(() => {
-        setTimeout(() => {
-            setTime(calculateTime());
+        let interval = setInterval(() => {
             setDate(calculateDate());
+            setTime(calculateTime());
         }, 1000);
-    });
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [time]);
 
     return (
         <div className="app-wrapper-element">
-            <div className="app-wrapper-element-time">{time}</div>
+            <div className="app-wrapper-element-time">
+                {time === "Loading .." ? time : time.substr(0, 5)}
+            </div>
             <div className="app-wrapper-element-date">{date}</div>
         </div>
     );

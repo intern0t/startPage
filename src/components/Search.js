@@ -5,7 +5,8 @@ import { prefix, name_openinnewtab } from "../config";
 const Search = ({ placeholder }) => {
     const [query, setQuery] = useState("");
     const [openInNewTab, toggleOpenInNewTab] = useState(
-        localStorage && localStorage.getItem([prefix + name_openinnewtab]) !== null
+        localStorage &&
+            localStorage.getItem([prefix + name_openinnewtab]) !== null
             ? JSON.parse(localStorage.getItem([prefix + name_openinnewtab]))
             : true
     );
@@ -33,26 +34,28 @@ const Search = ({ placeholder }) => {
 
     return (
         <div className="app-wrapper-element">
-            <input
-                type="text"
-                className="app-wrapper-element-text"
-                placeholder={placeholder}
-                onChange={e => setQuery(e.target.value)}
-                onKeyPress={onEnterKey}
-                value={query}
-                ref={input => {
-                    input && input.focus();
-                }}
-                autoFocus
-            />
-            <NewTabHandler
-                openInNewTab={openInNewTab}
-                toggleOpenInNewTab={toggleOpenInNewTab}
-                setQuery={setQuery}
-                color={"rgba(255,255,255, 0.5)"}
-                size={20}
-                title={"Toggle open search in new tab."}
-            />
+            <div className="app-wrapper-element-inline">
+                <input
+                    type="text"
+                    className="app-wrapper-element-text"
+                    placeholder={placeholder}
+                    onChange={e => setQuery(e.target.value)}
+                    onKeyPress={onEnterKey}
+                    value={query}
+                    ref={input => {
+                        input && input.focus();
+                    }}
+                    autoFocus
+                />
+                <NewTabHandler
+                    openInNewTab={openInNewTab}
+                    toggleOpenInNewTab={toggleOpenInNewTab}
+                    setQuery={setQuery}
+                    color={"rgba(255,255,255, 0.5)"}
+                    size={20}
+                    title={"Toggle open search in new tab."}
+                />
+            </div>
         </div>
     );
 };
