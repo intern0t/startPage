@@ -1,10 +1,23 @@
-import React, { useState } from "react";
-import Tick from "../feathers/check-square.svg";
-import Unticked from "../feathers/square.svg";
+import React, { useState, useEffect } from "react";
+import { CheckSquare, Square, X } from "react-feather";
+import { prefix, name_openinnewtab } from "../config";
 
 const Search = ({ placeholder }) => {
     const [query, setQuery] = useState("");
-    const [openInNewTab, toggleOpenInNewTab] = useState(false);
+    const [openInNewTab, toggleOpenInNewTab] = useState(
+        localStorage && localStorage.getItem([prefix + name_openinnewtab]) !== null
+            ? JSON.parse(localStorage.getItem([prefix + name_openinnewtab]))
+            : true
+    );
+
+    useEffect(() => {
+        // Has value regarding this feature, load it.
+        localStorage.setItem([prefix + name_openinnewtab], openInNewTab);
+
+        return () => {
+            console.log("Open in new tab setting, updated!");
+        };
+    }, [openInNewTab]);
 
     function onEnterKey(e) {
         if (e.key === "Enter") {
@@ -13,6 +26,7 @@ const Search = ({ placeholder }) => {
                     `https://duckduckgo.com/?q=${query}`,
                     openInNewTab && openInNewTab === true ? "_blank" : "_self"
                 );
+                this.searchField.focus();
             }
         }
     }
@@ -26,13 +40,49 @@ const Search = ({ placeholder }) => {
                 onChange={e => setQuery(e.target.value)}
                 onKeyPress={onEnterKey}
                 value={query}
+                ref={input => {
+                    input && input.focus();
+                }}
                 autoFocus
             />
-            <img
-                src={openInNewTab ? Tick : Unticked}
-                alt="Search Icon"
-                onClick={() => toggleOpenInNewTab(!openInNewTab)}
+            <NewTabHandler
+                openInNewTab={openInNewTab}
+                toggleOpenInNewTab={toggleOpenInNewTab}
+                setQuery={setQuery}
+                color={"rgba(255,255,255, 0.5)"}
+                size={20}
+                title={"Toggle open search in new tab."}
             />
+        </div>
+    );
+};
+
+const NewTabHandler = ({
+    title,
+    size,
+    color,
+    openInNewTab,
+    toggleOpenInNewTab,
+    setQuery
+}) => {
+    return (
+        <div className="inline-icon" title={title}>
+            <div title="Clear search field.">
+                <X color={color} size={20} onClick={() => setQuery("")} />
+            </div>
+            {openInNewTab ? (
+                <CheckSquare
+                    color={color}
+                    size={size}
+                    onClick={() => toggleOpenInNewTab(!openInNewTab)}
+                />
+            ) : (
+                <Square
+                    color={color}
+                    size={size}
+                    onClick={() => toggleOpenInNewTab(!openInNewTab)}
+                />
+            )}
         </div>
     );
 };
