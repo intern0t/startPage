@@ -2,21 +2,23 @@
 
 */
 
-@import "mixins", "extra";
+@import "reset", "mixins", "extra";
 
-$Rubrik: 'Rubik',
-sans-serif;
+$Rubrik: "Rubik", sans-serif;
 
-$white: #FFF;
+$shark: #222323;
+$storm-dust: #6c6c6b;
+$white: #fff;
 $black: #000;
-$gray: #9DABA9;
+$gray: #9daba9;
 
 $hundredPercent: 100%;
 
 $globalFontSize: 16px;
 
 body {
-    background: $white;
+    background: $shark;
+    color: $white;
     font-family: $Rubrik;
     font-size: $globalFontSize + 2;
     @include Flex(column);
@@ -31,40 +33,215 @@ body {
         align-content: center;
 
         &-wrapper {
+            max-width: 400px;
+            min-width: 400px;
             @include Flex(column);
 
             &-element {
-                margin: 10px 0;
+                // margin: 10px 0;
+                @include Flex(column);
+                align-items: center;
+                align-content: center;
+                justify-content: center;
 
-                &-time {
-                    font-size: 5 * $globalFontSize;
-                    color: rgba($black, .6);
-                    text-align: center;
+                &:nth-child(1) {
+                    margin-bottom: 20px;
                 }
 
-                &-date {
-                    color: $gray;
-                    margin: 10px 0;
-                    text-align: center;
-                    font-size: 1.3 * $globalFontSize;
+                &:nth-child(3) {
+                    margin-top: 20px;
+                }
+
+                .bookmarks {
+                    @include Flex(column);
+                    justify-content: flex-start;
+                    align-items: center;
+                    flex-wrap: nowrap;
+                    max-width: 100%;
+                    overflow: hidden;
+
+                    .bookmark {
+                        width: 100%;
+                        height: 35px;
+                        // overflow: hidden;
+                        margin: 7px 0;
+                        padding: 10px 0;
+                        @include Flex(row);
+                        align-items: center;
+                        align-content: center;
+                        text-decoration: none;
+                        font-family: $Rubrik;
+                        background: rgba($black, 0.2);
+                        border-radius: 5px;
+                        position: relative;
+                        z-index: 1;
+
+                        &:hover {
+                            background: rgba($black, 0.5);
+
+                            span {
+                                color: $white;
+                            }
+                        }
+
+                        img {
+                            padding: 3px;
+                            margin: 0 10px;
+                        }
+                        svg {
+                            padding: 3px;
+                        }
+
+                        span {
+                            font-size: $globalFontSize - 1;
+                            letter-spacing: 0.2px;
+                            color: $storm-dust;
+                            line-height: $globalFontSize + 1;
+                            max-height: $globalFontSize + 1;
+                            overflow: hidden;
+                            width: 100%;
+                            margin-left: 10px;
+                        }
+
+                        &-remove {
+                            position: absolute;
+                            right: 17px;
+                            background: $black;
+                            z-index: 9;
+                            width: 16px;
+                            height: 16px;
+                            border-radius: 11px;
+                            display: none;
+
+                            &:hover {
+                                background: rgba($black, 0.7);
+                            }
+                        }
+
+                        &:hover {
+                            .bookmark-remove {
+                                background: rgba($white, 0.2);
+                                display: block;
+                            }
+                        }
+                    }
+
+                    .new-bookmark {
+                        // position: relative;
+                        justify-content: center;
+                        color: $white;
+
+                        svg {
+                            margin: 0 10px;
+                        }
+                    }
+                }
+
+                &-inline {
+                    width: 100%;
+                    @include Flex(row);
+                    justify-content: flex-start;
+                    align-items: center;
+
+                    &-weather {
+                        width: 100%;
+                        @include Flex(row);
+                        align-items: center;
+                        align-content: center;
+                        justify-content: center;
+                        background: #00000052;
+                        padding: 20px 10px;
+                        // height: 50px;
+
+                        &-box {
+                            flex: 1;
+                        }
+                    }
+
+                    &:nth-child(1) {
+                        position: relative;
+                    }
+
+                    .inline-icon {
+                        position: absolute;
+                        right: 10px;
+                        cursor: pointer;
+                        @include Flex(row);
+                        justify-content: center;
+                        align-content: center;
+                        bottom: auto;
+                        margin-top: 1px;
+
+                        div {
+                            margin: 0 5px;
+                        }
+                    }
+                }
+
+                &-wrapper {
+                    width: 100%;
+                    @include Flex(row);
+                    justify-content: space-between;
+                    align-items: center;
+                    align-content: center;
+
+                    &-datetime {
+                        flex: 1;
+
+                        &-time {
+                            font-size: 5 * $globalFontSize;
+                            color: $storm-dust;
+                            text-align: center;
+                        }
+
+                        &-date {
+                            font-family: $Rubrik;
+                            letter-spacing: 0.5px;
+                            color: rgba($white, 0.5);
+                            margin: 10px 0;
+                            text-align: center;
+                            font-size: $globalFontSize - 1;
+                        }
+                    }
+
+                    &-weather {
+                        @include Flex(column);
+                        justify-content: center;
+                        align-content: center;
+                        align-items: center;
+
+                        &-icon {
+                            width: 50px;
+                        }
+
+                        &-digit {
+                            font-size: 1.2 * $globalFontSize;
+                            line-height: 2 * $globalFontSize;
+                            letter-spacing: 0.1px;
+                            color: rgba($white, 0.3);
+                        }
+                    }
                 }
 
                 &-text {
                     width: 100%;
-                    min-width: 400px;
                     height: 45px;
-                    margin: 20px 0;
-                    padding: 0 20px;
+                    margin: 10px 0;
+                    padding: 0 100px 0 20px;
                     line-height: 40px;
+                    font-family: $Rubrik;
                     font-size: $globalFontSize;
-                    background: rgba($black, .6);
-                    color: rgba($white, .9);
+                    background: rgba($black, 0.7);
+                    color: rgba($white, 0.9);
                     outline: 0;
                     border-radius: 22px;
                     border: 0;
+                    letter-spacing: 0.3px;
+                    box-shadow: 0px 0px 5px 1px $black;
 
                     &::placeholder {
-                        color: rgba($white, .5);
+                        letter-spacing: 0.3px;
+                        color: rgba($white, 0.5);
                     }
                 }
             }
