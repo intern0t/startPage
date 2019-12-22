@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as weatherCodes from "../weathercodes";
+import { degree } from "../config";
+import WIcon from "./WIcon";
 
 const Weather = () => {
     const [weather, setWeather] = useState({});
@@ -33,44 +35,48 @@ const Weather = () => {
     }, [weatherFetched]);
 
     return (
-        <div className="app-wrapper-element">
-            <div className="app-wrapper-element-inline">
-                {weatherFetched && weather && weather.weather !== null ? (
-                    <div className="app-wrapper-element-inline-weather">
-                        <div className="app-wrapper-element-inline-weather-box">
-                            {weather.main && weather.main.temp_min
-                                ? weather.main.temp_min
-                                : null}
-                        </div>
-                        <div className="app-wrapper-element-inline-weather-box">
-                            {weather.weather && weather.weather[0] ? (
-                                weather.weather[0].icon.indexOf("d") > 0 ? (
-                                    <img
-                                        src={require(
-                                            `../misc/weather_icons/wi-${
-                                                weatherCodes[
-                                                    `wi-owm-day-${[
-                                                        weather.weather[0].id
-                                                    ]}`
-                                                ]
-                                            }.svg`
-                                        )}
-                                    />
-                                ) : (
-                                    "night"
-                                )
-                            ) : null}
-                            {weather.main && weather.main.temp
-                                ? weather.main.temp
-                                : null}
-                        </div>
-                        <div className="app-wrapper-element-inline-weather-box">
-                            {weather.main && weather.main.temp_max
-                                ? weather.main.temp_max
-                                : null}
-                        </div>
-                    </div>
+        <div className="app-wrapper-element-wrapper-weather">
+            <div className="app-wrapper-element-wrapper-weather-icon">
+                {weather &&
+                weather.weather &&
+                weather.weather[0] &&
+                weather.weather[0].icon &&
+                weather.weather[0].id ? (
+                    weather.weather[0].icon.indexOf("d") > 0 ? (
+                        <WIcon
+                            name={
+                                weatherCodes[
+                                    `wi-owm-day-${[weather.weather[0].id]}`
+                                ]
+                            }
+                        ></WIcon>
+                    ) : (
+                        <img
+                            src={require(`../misc/weather_icons/wi-${
+                                weatherCodes[
+                                    `wi-owm-night-${[weather.weather[0].id]}`
+                                ]
+                            }.svg`)}
+                        />
+                    )
                 ) : null}
+            </div>
+            <div
+                className="app-wrapper-element-wrapper-weather-digit"
+                title={
+                    weather &&
+                    weather.weather &&
+                    weather.weather[0] &&
+                    weather.weather[0].description
+                        ? weather.weather[0].description.replace(/^\w/, c =>
+                              c.toUpperCase()
+                          )
+                        : "Weather Information."
+                }
+            >
+                {weather && weather.main && weather.main.temp
+                    ? `${weather.main.temp} ${degree}F`
+                    : null}
             </div>
         </div>
     );

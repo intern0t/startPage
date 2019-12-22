@@ -3,5 +3,7 @@ module.exports = {
     google_favicon: "https://www.google.com/s2/favicons?domain=",
     name_openinnewtab: "openinnewtab",
     name_24hours: "twentyfourhourclock",
-    set_24hours: true
+    set_24hours: true,
+    degree: "°",
+    defaultBookmarksHeight: "255px"
 };

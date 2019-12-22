@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CheckSquare, Square, X } from "react-feather";
+import { CheckSquare, Square, X, Plus } from "react-feather";
 import { prefix, name_openinnewtab } from "../config";
 
 const Search = ({ placeholder }) => {
@@ -73,19 +73,24 @@ const NewTabHandler = ({
             <div title="Clear search field.">
                 <X color={color} size={20} onClick={() => setQuery("")} />
             </div>
-            {openInNewTab ? (
-                <CheckSquare
-                    color={color}
-                    size={size}
-                    onClick={() => toggleOpenInNewTab(!openInNewTab)}
-                />
-            ) : (
-                <Square
-                    color={color}
-                    size={size}
-                    onClick={() => toggleOpenInNewTab(!openInNewTab)}
-                />
-            )}
+            <div title="Open search in new tab.">
+                {openInNewTab ? (
+                    <CheckSquare
+                        color={color}
+                        size={size}
+                        onClick={() => toggleOpenInNewTab(!openInNewTab)}
+                    />
+                ) : (
+                    <Square
+                        color={color}
+                        size={size}
+                        onClick={() => toggleOpenInNewTab(!openInNewTab)}
+                    />
+                )}
+            </div>
+            <div title="Add a new bookmark.">
+                <Plus color={color} size={20} />
+            </div>
         </div>
     );
 };

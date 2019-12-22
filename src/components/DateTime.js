@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { name_24hours, prefix, set_24hours } from "../config";
+// import { name_24hours, prefix, set_24hours } from "../config";
+import Weather from "./Weather";
 
 const DateTime = () => {
     const [time, setTime] = useState("Loading ..");
@@ -40,10 +41,17 @@ const DateTime = () => {
 
     return (
         <div className="app-wrapper-element">
-            <div className="app-wrapper-element-time">
-                {time === "Loading .." ? time : time.substr(0, 5)}
+            <div className="app-wrapper-element-wrapper">
+                <div className="app-wrapper-element-wrapper-datetime">
+                    <div className="app-wrapper-element-wrapper-datetime-time">
+                        {time === "Loading .." ? time : time.substr(0, 5)}
+                    </div>
+                    <div className="app-wrapper-element-wrapper-datetime-date">
+                        {date}
+                    </div>
+                </div>
+                <Weather />
             </div>
-            <div className="app-wrapper-element-date">{date}</div>
         </div>
     );
 };
