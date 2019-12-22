@@ -51,13 +51,13 @@ const Weather = () => {
                             }
                         ></WIcon>
                     ) : (
-                        <img
-                            src={require(`../misc/weather_icons/wi-${
+                        <WIcon
+                            name={
                                 weatherCodes[
                                     `wi-owm-night-${[weather.weather[0].id]}`
                                 ]
-                            }.svg`)}
-                        />
+                            }
+                        ></WIcon>
                     )
                 ) : null}
             </div>
