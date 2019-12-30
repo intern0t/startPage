@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-// import { name_24hours, prefix, set_24hours } from "../config";
-import Weather from "./Weather";
 
 const DateTime = () => {
-    const [time, setTime] = useState("Loading ..");
-    const [date, setDate] = useState("Loading ..");
+    const [time, setTime] = useState("..");
+    const [date, setDate] = useState("..");
 
     let _date = new Date();
 
@@ -37,20 +35,15 @@ const DateTime = () => {
         return () => {
             clearInterval(interval);
         };
-    }, [time]);
+    });
 
     return (
-        <div className="app-wrapper-element">
-            <div className="app-wrapper-element-wrapper">
-                <div className="app-wrapper-element-wrapper-datetime">
-                    <div className="app-wrapper-element-wrapper-datetime-time">
-                        {time === "Loading .." ? time : time.substr(0, 5)}
-                    </div>
-                    <div className="app-wrapper-element-wrapper-datetime-date">
-                        {date}
-                    </div>
-                </div>
-                <Weather />
+        <div className="app-wrapper-element-wrapper-datetime">
+            <div className="app-wrapper-element-wrapper-datetime-time">
+                {time === ".." ? time : time.substr(0, 5)}
+            </div>
+            <div className="app-wrapper-element-wrapper-datetime-date">
+                {date}
             </div>
         </div>
     );

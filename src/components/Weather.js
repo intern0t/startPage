@@ -4,8 +4,50 @@ import { degree } from "../config";
 import WIcon from "./WIcon";
 
 const Weather = () => {
-    const [weather, setWeather] = useState({});
-    const [weatherFetched, setFetched] = useState(false);
+    const [weather, setWeather] = useState({
+        coord: {
+            lon: -77.17,
+            lat: 38.88
+        },
+        weather: [
+            {
+                id: 721,
+                main: "Haze",
+                description: "haze",
+                icon: "50d"
+            }
+        ],
+        base: "stations",
+        main: {
+            temp: 46.24,
+            feels_like: 39.88,
+            temp_min: 42.8,
+            temp_max: 48.99,
+            pressure: 1022,
+            humidity: 52
+        },
+        visibility: 2414,
+        wind: {
+            speed: 4.34,
+            deg: 183
+        },
+        clouds: {
+            all: 1
+        },
+        dt: 1577295068,
+        sys: {
+            type: 1,
+            id: 3231,
+            country: "US",
+            sunrise: 1577276719,
+            sunset: 1577310711
+        },
+        timezone: -18000,
+        id: 4758390,
+        name: "Falls Church",
+        cod: 200
+    });
+    const [weatherFetched, setFetched] = useState(true);
 
     const fetchWeather = () => {
         fetch(
@@ -29,7 +71,6 @@ const Weather = () => {
             }, 1000 * 60);
         }
         return () => {
-            console.log("Weather information fetched? " + weatherFetched);
             clearInterval(interval);
         };
     }, [weatherFetched]);
@@ -49,14 +90,14 @@ const Weather = () => {
                                     `wi-owm-day-${[weather.weather[0].id]}`
                                 ]
                             }
-                        ></WIcon>
+                        />
                     ) : (
-                        <img
-                            src={require(`../misc/weather_icons/wi-${
+                        <WIcon
+                            name={
                                 weatherCodes[
                                     `wi-owm-night-${[weather.weather[0].id]}`
                                 ]
-                            }.svg`)}
+                            }
                         />
                     )
                 ) : null}

@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { CheckSquare, Square, X, Plus } from "react-feather";
-import { prefix, name_openinnewtab } from "../config";
+import {
+    prefix,
+    name_openinnewtab,
+    regex_url_validity,
+    regex_domain_name
+} from "../config";
+import { BookmarkContext } from "../contexts/BookmarkContext";
 
 const Search = ({ placeholder }) => {
-    const [query, setQuery] = useState("");
+    let searchBox = null;
+    const [bookmarks, setBookmarks, query, setQuery] = useContext(
+        BookmarkContext
+    );
     const [openInNewTab, toggleOpenInNewTab] = useState(
         localStorage &&
             localStorage.getItem([prefix + name_openinnewtab]) !== null
@@ -14,23 +23,62 @@ const Search = ({ placeholder }) => {
     useEffect(() => {
         // Has value regarding this feature, load it.
         localStorage.setItem([prefix + name_openinnewtab], openInNewTab);
-
         return () => {
             console.log("Open in new tab setting, updated!");
         };
-    }, [openInNewTab]);
+    }, [openInNewTab, query]);
 
-    function onEnterKey(e) {
+    function onKeyPress(e) {
         if (e.key === "Enter") {
             if (query && query !== "" && query.length > 0) {
                 window.open(
                     `https://duckduckgo.com/?q=${query}`,
                     openInNewTab && openInNewTab === true ? "_blank" : "_self"
                 );
-                this.searchField.focus();
+                searchBox.focus();
             }
         }
     }
+
+    function onKeyUp(e) {
+        if (e.keyCode === 27) {
+            setQuery("");
+            searchBox.focus();
+        }
+    }
+
+    const addBookmark = bookmarkToAdd => {
+        if (
+            bookmarkToAdd &&
+            bookmarkToAdd.url &&
+            bookmarkToAdd.url.match(regex_url_validity)
+        ) {
+            const duplicateBookmarks = bookmarks.filter(
+                bookmark => bookmark.url === bookmarkToAdd.url
+            );
+
+            if (duplicateBookmarks && duplicateBookmarks.length > 0) {
+                return false;
+            } else {
+                const matchURL = bookmarkToAdd.url.match(regex_domain_name);
+                const _matchDomain = matchURL[1].split(".")[0];
+
+                if (matchURL && matchURL.length > 0) {
+                    bookmarkToAdd.name = bookmarkToAdd.name
+                        ? bookmarkToAdd.name
+                        : _matchDomain[0].toUpperCase() +
+                              _matchDomain.substr(1) || "Unknown";
+
+                    setBookmarks(prevBookmarks => [
+                        ...prevBookmarks,
+                        bookmarkToAdd
+                    ]);
+                }
+            }
+        }
+        setQuery("");
+        searchBox.focus();
+    };
 
     return (
         <div className="app-wrapper-element">
@@ -39,12 +87,11 @@ const Search = ({ placeholder }) => {
                     type="text"
                     className="app-wrapper-element-text"
                     placeholder={placeholder}
-                    onChange={e => setQuery(e.target.value)}
-                    onKeyPress={onEnterKey}
+                    onChange={e => setQuery(e.target.value || "")}
+                    onKeyPress={onKeyPress}
+                    onKeyUp={onKeyUp}
                     value={query}
-                    ref={input => {
-                        input && input.focus();
-                    }}
+                    ref={element => (searchBox = element)}
                     autoFocus
                 />
                 <NewTabHandler
@@ -54,6 +101,9 @@ const Search = ({ placeholder }) => {
                     color={"rgba(255,255,255, 0.5)"}
                     size={20}
                     title={"Toggle open search in new tab."}
+                    query={query}
+                    searchBoxRef={searchBox}
+                    addBookmark={addBookmark}
                 />
             </div>
         </div>
@@ -66,12 +116,19 @@ const NewTabHandler = ({
     color,
     openInNewTab,
     toggleOpenInNewTab,
-    setQuery
+    setQuery,
+    query,
+    searchBoxRef,
+    addBookmark
 }) => {
     return (
         <div className="inline-icon" title={title}>
             <div title="Clear search field.">
-                <X color={color} size={20} onClick={() => setQuery("")} />
+                <X
+                    color={color}
+                    size={20}
+                    onClick={() => setQuery("") && searchBoxRef.focus()}
+                />
             </div>
             <div title="Open search in new tab.">
                 {openInNewTab ? (
@@ -88,7 +145,13 @@ const NewTabHandler = ({
                     />
                 )}
             </div>
-            <div title="Add a new bookmark.">
+            <div
+                title="Add a new bookmark."
+                onClick={e => {
+                    e.preventDefault();
+                    addBookmark({ name: "", url: query });
+                }}
+            >
                 <Plus color={color} size={20} />
             </div>
         </div>
