@@ -3,13 +3,16 @@ import { CheckSquare, Square, X, Plus } from "react-feather";
 import {
     prefix,
     name_openinnewtab,
+    name_bookmarks,
     regex_url_validity,
-    regex_domain_name
+    cors_proxy,
+    regex_site_title
 } from "../config";
 import { BookmarkContext } from "../contexts/BookmarkContext";
 
 const Search = ({ placeholder }) => {
     let searchBox = null;
+    const [title, settitle] = useState("");
     const [bookmarks, setBookmarks, query, setQuery] = useContext(
         BookmarkContext
     );
@@ -23,8 +26,12 @@ const Search = ({ placeholder }) => {
     useEffect(() => {
         // Has value regarding this feature, load it.
         localStorage.setItem([prefix + name_openinnewtab], openInNewTab);
+        localStorage.setItem(
+            [prefix + name_bookmarks],
+            JSON.stringify(bookmarks)
+        );
         return () => {
-            console.log("Open in new tab setting, updated!");
+            console.log(";)");
         };
     }, [openInNewTab, query]);
 
@@ -53,28 +60,39 @@ const Search = ({ placeholder }) => {
             bookmarkToAdd.url &&
             bookmarkToAdd.url.match(regex_url_validity)
         ) {
-            const duplicateBookmarks = bookmarks.filter(
-                bookmark => bookmark.url === bookmarkToAdd.url
-            );
+            fetch(`${cors_proxy}${bookmarkToAdd.url}`)
+                .then(res => res.text())
+                .then(
+                    content => {
+                        let title =
+                            content
+                                .match(regex_site_title)[0]
+                                .replace("<title>", "")
+                                .replace("</title>", "") || "Unknown";
 
-            if (duplicateBookmarks && duplicateBookmarks.length > 0) {
-                return false;
-            } else {
-                const matchURL = bookmarkToAdd.url.match(regex_domain_name);
-                const _matchDomain = matchURL[1].split(".")[0];
+                        const duplicateBookmarks = bookmarks.filter(
+                            bookmark => bookmark.url === bookmarkToAdd.url
+                        );
+                        if (
+                            duplicateBookmarks &&
+                            duplicateBookmarks.length > 0
+                        ) {
+                            return false;
+                        } else {
+                            bookmarkToAdd.url = bookmarkToAdd.url.replace(
+                                "www",
+                                ""
+                            );
 
-                if (matchURL && matchURL.length > 0) {
-                    bookmarkToAdd.name = bookmarkToAdd.name
-                        ? bookmarkToAdd.name
-                        : _matchDomain[0].toUpperCase() +
-                              _matchDomain.substr(1) || "Unknown";
-
-                    setBookmarks(prevBookmarks => [
-                        ...prevBookmarks,
-                        bookmarkToAdd
-                    ]);
-                }
-            }
+                            bookmarkToAdd.name =
+                                title[0].toUpperCase() + title.substr(1);
+                            setBookmarks(prevBookmarks => [
+                                ...prevBookmarks,
+                                bookmarkToAdd
+                            ]);
+                        }
+                    }
+                );
         }
         setQuery("");
         searchBox.focus();

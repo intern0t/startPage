@@ -24,7 +24,9 @@ const Bookmarks = () => {
                     }}
                 >
                     {/* Bookmarks here. */}
-                    {bookmarks && typeof bookmarks === "object"
+                    {bookmarks &&
+                    typeof bookmarks === "object" &&
+                    bookmarks.length > 0
                         ? bookmarks
                               .filter(bookmark =>
                                   query && query.length > 0
@@ -36,13 +38,17 @@ const Bookmarks = () => {
                                             .indexOf(query.toLowerCase()) > 0
                                       : true
                               )
+                              .sort((a, b) => {
+                                  return a.name < b.name ? -1 : 1;
+                                  return 0;
+                              })
                               .map(bookmark => (
                                   <Bookmark
                                       bookmark={bookmark}
                                       key={shortid.generate()}
                                   />
                               ))
-                        : null}
+                        : ""}
                 </SimpleBar>
             </div>
         </div>
