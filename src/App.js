@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import DateTime from "./components/DateTime";
 import Search from "./components/Search";
 import Bookmarks from "./components/Bookmarks";
 import Weather from "./components/Weather";
 import "./styles/build/startpage.min.css";
-// import { BookmarksProvider } from "./composition/BookmarksProvider";
 import { BookmarkProvider } from "./contexts/BookmarkContext";
 
 function App() {

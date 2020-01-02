@@ -96,8 +96,8 @@ body {
                             font-size: $globalFontSize - 1;
                             letter-spacing: 0.2px;
                             color: $storm-dust;
-                            line-height: $globalFontSize + 1;
-                            max-height: $globalFontSize + 1;
+                            line-height: $globalFontSize * 2.8125;
+                            max-height: $globalFontSize * 2.8125;
                             overflow: hidden;
                             width: ($hundredPercent - 25);
                             margin-left: 10px;
@@ -113,6 +113,10 @@ body {
                             height: 16px;
                             border-radius: 11px;
                             display: none;
+                            @include Flex(row);
+                            justify-content: center;
+                            align-items: center;
+                            align-content: center;
 
                             &:hover {
                                 background: rgba($black, 0.7);
@@ -219,7 +223,7 @@ body {
                             font-size: 1.2 * $globalFontSize;
                             line-height: 2 * $globalFontSize;
                             letter-spacing: 0.1px;
-                            color: rgba($white, 0.3);
+                            color: rgba($white, 0.4);
                         }
                     }
                 }
@@ -238,7 +242,7 @@ body {
                     border-radius: 22px;
                     border: 0;
                     letter-spacing: 0.3px;
-                    box-shadow: 0px 0px 5px 1px $black;
+                    box-shadow: 0px 0px 25px 1px $black;
 
                     &::placeholder {
                         letter-spacing: 0.3px;
@@ -255,4 +259,19 @@ body {
             }
         }
     }
+}
+
+.bookmark-enter {
+    opacity: 0.01;
+}
+.bookmark-enter.bookmark-enter-active {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+}
+.bookmark-leave {
+    opacity: 1;
+}
+.bookmark-leave.bookmark-leave-active {
+    opacity: 0.01;
+    transition: opacity 300ms ease-in;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { CheckSquare, Square, X, Plus } from "react-feather";
+import { CheckSquare, Square, X, Plus, Loader } from "react-feather";
 import {
     prefix,
     name_openinnewtab,
@@ -12,7 +12,6 @@ import { BookmarkContext } from "../contexts/BookmarkContext";
 
 const Search = ({ placeholder }) => {
     let searchBox = null;
-    const [title, settitle] = useState("");
     const [bookmarks, setBookmarks, query, setQuery] = useContext(
         BookmarkContext
     );
@@ -22,6 +21,7 @@ const Search = ({ placeholder }) => {
             ? JSON.parse(localStorage.getItem([prefix + name_openinnewtab]))
             : true
     );
+    const [adding, setadding] = useState(false);
 
     useEffect(() => {
         // Has value regarding this feature, load it.
@@ -33,10 +33,11 @@ const Search = ({ placeholder }) => {
         return () => {
             console.log(";)");
         };
-    }, [openInNewTab, query]);
+    }, [openInNewTab, query, bookmarks]);
 
     function onKeyPress(e) {
-        if (e.key === "Enter") {
+        // Enter key code = 13
+        if (e.key === "Enter" || e.keyCode === 13) {
             if (query && query !== "" && query.length > 0) {
                 window.open(
                     `https://duckduckgo.com/?q=${query}`,
@@ -48,7 +49,8 @@ const Search = ({ placeholder }) => {
     }
 
     function onKeyUp(e) {
-        if (e.keyCode === 27) {
+        // Escape key code = 27
+        if (e.key === "escape" || e.keyCode === 27) {
             setQuery("");
             searchBox.focus();
         }
@@ -60,39 +62,43 @@ const Search = ({ placeholder }) => {
             bookmarkToAdd.url &&
             bookmarkToAdd.url.match(regex_url_validity)
         ) {
+            setadding(!adding);
             fetch(`${cors_proxy}${bookmarkToAdd.url}`)
                 .then(res => res.text())
-                .then(
-                    content => {
-                        let title =
-                            content
-                                .match(regex_site_title)[0]
-                                .replace("<title>", "")
-                                .replace("</title>", "") || "Unknown";
-
-                        const duplicateBookmarks = bookmarks.filter(
-                            bookmark => bookmark.url === bookmarkToAdd.url
-                        );
-                        if (
-                            duplicateBookmarks &&
-                            duplicateBookmarks.length > 0
-                        ) {
-                            return false;
-                        } else {
-                            bookmarkToAdd.url = bookmarkToAdd.url.replace(
-                                "www",
-                                ""
-                            );
-
-                            bookmarkToAdd.name =
-                                title[0].toUpperCase() + title.substr(1);
-                            setBookmarks(prevBookmarks => [
-                                ...prevBookmarks,
-                                bookmarkToAdd
-                            ]);
+                .then(content => {
+                    let m;
+                    let title = "";
+                    const regex = /<title(.*?)>(.*?)<\/title>/gm;
+                    while ((m = regex.exec(content)) !== null) {
+                        // This is necessary to avoid infinite loops with zero-width matches
+                        if (m.index === regex.lastIndex) {
+                            regex.lastIndex++;
                         }
+
+                        // The result can be accessed through the `m`-variable.
+                        m.forEach((match, groupIndex) => {
+                            title = match;
+                        });
                     }
-                );
+
+                    const duplicateBookmarks = bookmarks.filter(
+                        bookmark => bookmark.url === bookmarkToAdd.url
+                    );
+                    if (duplicateBookmarks && duplicateBookmarks.length > 0) {
+                        console.log("Duplicate");
+                        return false;
+                    } else {
+                        bookmarkToAdd.name =
+                            title.length > 0
+                                ? title[0].toUpperCase() + title.substr(1)
+                                : "Unknown";
+                        setBookmarks(prevBookmarks => [
+                            ...prevBookmarks,
+                            bookmarkToAdd
+                        ]);
+                        setadding(false);
+                    }
+                });
         }
         setQuery("");
         searchBox.focus();
@@ -122,6 +128,7 @@ const Search = ({ placeholder }) => {
                     query={query}
                     searchBoxRef={searchBox}
                     addBookmark={addBookmark}
+                    adding={adding}
                 />
             </div>
         </div>
@@ -137,7 +144,8 @@ const NewTabHandler = ({
     setQuery,
     query,
     searchBoxRef,
-    addBookmark
+    addBookmark,
+    adding
 }) => {
     return (
         <div className="inline-icon" title={title}>
@@ -170,7 +178,11 @@ const NewTabHandler = ({
                     addBookmark({ name: "", url: query });
                 }}
             >
-                <Plus color={color} size={20} />
+                {adding === true ? (
+                    <Loader color="#32cd32" size={20} />
+                ) : (
+                    <Plus color={color} size={20} />
+                )}
             </div>
         </div>
     );

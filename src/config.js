@@ -10,5 +10,5 @@ module.exports = {
     defaultBookmarksHeight: "255px",
     regex_domain_name: /:\/\/(.[^/]+)/,
     regex_url_validity: /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g,
-    regex_site_title: /<title>(.*?)<\/title>/gm
+    regex_site_title: /<title(.*?)>((.*?))<\/title>/gmis
 };

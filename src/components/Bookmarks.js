@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
-import { X, Book } from "react-feather";
+import React, { useContext } from "react";
+import { X } from "react-feather";
 import { defaultBookmarksHeight, regex_domain_name } from "../config";
 import SimpleBar from "simplebar-react";
 import "simplebar/dist/simplebar.min.css";
 import shortid from "shortid";
 import { BookmarkContext } from "../contexts/BookmarkContext";
+import { prefix, name_bookmarks, name_openinnewtab } from "../config";
 
 // https://favicongrabber.com/service-api-reference
 
@@ -39,13 +40,12 @@ const Bookmarks = () => {
                                       : true
                               )
                               .sort((a, b) => {
-                                  return a.name < b.name ? -1 : 1;
-                                  return 0;
+                                  return (a.name < b.name ? -1 : 1) || 0;
                               })
                               .map(bookmark => (
                                   <Bookmark
-                                      bookmark={bookmark}
                                       key={shortid.generate()}
+                                      bookmark={bookmark}
                                   />
                               ))
                         : ""}
@@ -57,9 +57,48 @@ const Bookmarks = () => {
 
 const Bookmark = ({ bookmark }) => {
     let domainName = bookmark.url.match(regex_domain_name)[1];
+    const [bookmarks, setBookmarks] = useContext(
+        BookmarkContext
+    );
+
+    const removeBookmark = bookmarkToRemove => {
+        const filteredBookmark = bookmarks.filter(_bookmark => {
+            return (
+                _bookmark.name !== bookmark.name &&
+                _bookmark.url !== bookmark.url
+            );
+        });
+
+        setBookmarks(filteredBookmark);
+        localStorage.setItem(
+            [prefix + name_bookmarks],
+            JSON.stringify(bookmarks)
+        );
+    };
+
+    const openBookmarkLink = bookmarkToOpen => {
+        let openInNewTab =
+            localStorage.getItem([prefix + name_openinnewtab]) === "true";
+        console.log(
+            localStorage.getItem([prefix + name_openinnewtab]),
+            openInNewTab,
+            " Open in new tab."
+        );
+        window.open(
+            `${bookmarkToOpen.url}`,
+            openInNewTab === true ? "_blank" : "_self"
+        );
+    };
 
     return (
-        <a className="bookmark" href={bookmark.url} title={bookmark.url}>
+        <a
+            className="bookmark"
+            href={bookmark.url}
+            onClick={e => {
+                e.preventDefault();
+            }}
+            title={`${bookmark.name}\n${bookmark.url}`}
+        >
             <img
                 src={
                     bookmark.url
@@ -72,7 +111,7 @@ const Bookmark = ({ bookmark }) => {
                         : domainName[0].toUpperCase() + domainName.substr(1)
                 }'s icon.`}
             />
-            <span>
+            <span onClick={() => openBookmarkLink(bookmark)}>
                 {bookmark.name ||
                     (domainName[0].toUpperCase() + domainName.substr(1)).split(
                         "."
@@ -81,7 +120,7 @@ const Bookmark = ({ bookmark }) => {
             <div
                 className="bookmark-remove"
                 title="Remove"
-                onClick={e => e.preventDefault()}
+                onClick={() => removeBookmark(bookmark)}
             >
                 <X size={10} color={"#FFF"} />
             </div>
