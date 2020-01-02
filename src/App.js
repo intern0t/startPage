@@ -1,22 +1,29 @@
 import React from "react";
-import "./styles/build/startpage.min.css";
 import DateTime from "./components/DateTime";
 import Search from "./components/Search";
 import Bookmarks from "./components/Bookmarks";
-// import Weather from "./components/Weather";
+import Weather from "./components/Weather";
+import "./styles/build/startpage.min.css";
+import { BookmarkProvider } from "./contexts/BookmarkContext";
 
 function App() {
     return (
         <div className="app">
             <div className="app-wrapper">
-                {/* Date & Time */}
-                <DateTime />
-                {/* DuckDuckGo! search field. */}
-                <Search placeholder="Search using DuckDuckGo!" />
-                {/* Weather Information */}
-                {/* <Weather /> */}
-                {/* Bookmarks */}
-                <Bookmarks />
+                <div className="app-wrapper-element">
+                    <div className="app-wrapper-element-wrapper">
+                        {/* <DateTime /> */}
+                        <DateTime />
+                        {/* Weather Information */}
+                        <Weather />
+                    </div>
+                </div>
+                <BookmarkProvider>
+                    {/* DuckDuckGo! search field. */}
+                    <Search placeholder="Search using DuckDuckGo!" />
+                    {/* Bookmarks */}
+                    <Bookmarks />
+                </BookmarkProvider>
             </div>
         </div>
     );

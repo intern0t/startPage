@@ -4,7 +4,7 @@ import { degree } from "../config";
 import WIcon from "./WIcon";
 
 const Weather = () => {
-    const [weather, setWeather] = useState({});
+    const [weather, setWeather] = useState("");
     const [weatherFetched, setFetched] = useState(false);
 
     const fetchWeather = () => {
@@ -29,51 +29,44 @@ const Weather = () => {
             }, 1000 * 60);
         }
         return () => {
-            console.log("Weather information fetched? " + weatherFetched);
             clearInterval(interval);
         };
     }, [weatherFetched]);
 
     return (
-        <div className="app-wrapper-element-wrapper-weather">
+        <div
+            className="app-wrapper-element-wrapper-weather"
+            title={
+                weather &&
+                weather.weather &&
+                weather.weather[0] &&
+                weather.weather[0].description
+                    ? weather.weather[0].description.replace(/^\w/, c =>
+                          c.toUpperCase()
+                      )
+                    : "Weather Information."
+            }
+        >
             <div className="app-wrapper-element-wrapper-weather-icon">
                 {weather &&
                 weather.weather &&
                 weather.weather[0] &&
                 weather.weather[0].icon &&
                 weather.weather[0].id ? (
-                    weather.weather[0].icon.indexOf("d") > 0 ? (
-                        <WIcon
-                            name={
-                                weatherCodes[
-                                    `wi-owm-day-${[weather.weather[0].id]}`
-                                ]
-                            }
-                        ></WIcon>
-                    ) : (
-                        <WIcon
-                            name={
-                                weatherCodes[
-                                    `wi-owm-night-${[weather.weather[0].id]}`
-                                ]
-                            }
-                        ></WIcon>
-                    )
+                    <WIcon
+                        name={
+                            weatherCodes[
+                                `wi-owm-${
+                                    weather.weather[0].icon.indexOf("d") > 0
+                                        ? "day"
+                                        : "night"
+                                }-${[weather.weather[0].id]}`
+                            ]
+                        }
+                    />
                 ) : null}
             </div>
-            <div
-                className="app-wrapper-element-wrapper-weather-digit"
-                title={
-                    weather &&
-                    weather.weather &&
-                    weather.weather[0] &&
-                    weather.weather[0].description
-                        ? weather.weather[0].description.replace(/^\w/, c =>
-                              c.toUpperCase()
-                          )
-                        : "Weather Information."
-                }
-            >
+            <div className="app-wrapper-element-wrapper-weather-digit">
                 {weather && weather.main && weather.main.temp
                     ? `${weather.main.temp} ${degree}F`
                     : null}
