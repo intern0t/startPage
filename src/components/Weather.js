@@ -53,23 +53,17 @@ const Weather = () => {
                 weather.weather[0] &&
                 weather.weather[0].icon &&
                 weather.weather[0].id ? (
-                    weather.weather[0].icon.indexOf("d") > 0 ? (
-                        <WIcon
-                            name={
-                                weatherCodes[
-                                    `wi-owm-day-${[weather.weather[0].id]}`
-                                ]
-                            }
-                        />
-                    ) : (
-                        <WIcon
-                            name={
-                                weatherCodes[
-                                    `wi-owm-night-${[weather.weather[0].id]}`
-                                ]
-                            }
-                        />
-                    )
+                    <WIcon
+                        name={
+                            weatherCodes[
+                                `wi-owm-${
+                                    weather.weather[0].icon.indexOf("d") > 0
+                                        ? "day"
+                                        : "night"
+                                }-${[weather.weather[0].id]}`
+                            ]
+                        }
+                    />
                 ) : null}
             </div>
             <div className="app-wrapper-element-wrapper-weather-digit">
